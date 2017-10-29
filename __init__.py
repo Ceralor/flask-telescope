@@ -1,0 +1,57 @@
+## Telescope 0.1
+## Telescope is a "plugin" for Flask that adds Telegram bot support via webhooks
+## Commands are defined using the @bot.command("command_name") decorator
+## The defined function MUST accept one parameter, which is the Telegram message object
+## The defined function MUST return message text, or may return None if no response is needed
+
+from flask import request, jsonify
+from functools import wraps
+
+class Bot(object):
+	def __init__(self, flask_app, tg_api_key, route_root = "tgbot"):
+		self.tg_api_key = tg_api_key
+		self.route_root = route_root
+		self.bot_commands = {}
+		bot_path = "/" + route_root + "/" + self.tg_api_key
+		@flask_app.route(bot_path, methods=["GET","POST"])
+		def handle_command_init():
+			return self._handle_command()
+	def _handle_command(self):
+		json_data = request.get_json()
+		assert json_data != {}, "Must send valid JSON."
+		message = json_data["message"]
+		chat_id = message["chat"]["id"]
+		if message["text"][0:1] != "/":
+			response_text = self._handle_default(message)
+		else:
+			command_end = self.find_command_end(message["text"])
+			command_name = message["text"][1:command_end]
+			if command_name in self.bot_commands.keys():
+				response_text = self.bot_commands[command_name](message)
+			else:
+				response_text = self._handle_default(message)
+		if response_text is not None:
+			response_data = {"method": "sendMessage",\
+		    	"chat_id": chat_id, "text": response_text, "parse_mode": "Markdown" }
+		else:
+			response_data = {}
+		return jsonify(response_data)
+	def find_command_end(self,message_text):
+		command_end = message_text.find(' ')
+		if command_end < 2:
+			command_end = None
+		return command_end
+	def find_params(self,message_text):
+		command_end = self.find_command_end(message_text)
+		if command_end == None:
+			return ""
+		params_start = command_end + 1
+		return message_text[params_start:]
+	def _handle_default(self,message):
+		## Eventually this will call bot_commands["DEFAULT"]
+		return None
+	def command(self,command_name):
+		def decorator(f):
+			self.bot_commands[command_name] = f
+			return f
+		return decorator
