@@ -2,12 +2,16 @@
 
 Telescope is a small module for Flask that adds a decorator class for defining Telegram bot commands when using webhooks for the bot.
 
+### Requirements ###
+
+Telescope requires Flask, as it was designed for that framework and relies on the routing. 
+It also requires Python 3. It may be compatible with Python 2.7 but I have not tested this.
+
 ### How do I get set up? ###
 
-Clone the repo within your project folder to have `$project/telescope`. If you don't already have Flask installed, you can use one of the following:
+Clone the repo within your project folder to have `$project/telescope`. If you don't already have Flask installed, you can use the following:
 
 	pip install flask
-	pip install -r telescope/requirements.txt
 
 In your project, do the below:
 
