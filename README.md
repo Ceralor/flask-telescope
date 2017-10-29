@@ -9,7 +9,7 @@ It also requires Python 3. It may be compatible with Python 2.7 but I have not t
 
 ### How do I get set up? ###
 
-Clone the repo within your project folder to have `$project/telescope`. If you don't already have Flask installed, you can use the following:
+Clone the repo within your project folder, or [download the repo and unpack it to your project folder](https://bitbucket.org/ceralor/telescope/get/master.zip) to have `$project/telescope`. If you don't already have Flask installed, you can use the following:
 
 	pip install flask
 
