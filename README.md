@@ -24,3 +24,7 @@ In your project, do the below:
 That's it! You can then use the `@bot.command("command")` decorator before the function you wish for the specified command to call, just like using `@app.route("/some-path")` in Flask.
 
 Of note, your method MUST accept one argument, the Telegram message object, and return `None` if no response is required or a string containing the response message. You can also `return None` if you are manually sending a response.
+
+#### Okay but....why 'Telescope' ####
+
+Because I'm super corny. It's a portmanteau of 'Telegram' and 'microscope' becuse Robert Hooke was famous for the research done with his microscope and this is for webhooks... Hooke... Hahah I make bad puns.
