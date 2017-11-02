@@ -48,8 +48,10 @@ class Bot(object):
 		params_start = command_end + 1
 		return message_text[params_start:]
 	def _handle_default(self,message):
-		## Eventually this will call bot_commands["DEFAULT"]
-		return None
+		if "DEFAULT" in self.bot_commands.keys():
+			return self.bot_commands["DEFAULT"](message)
+		else:
+			return None
 	def command(self,command_name):
 		def decorator(f):
 			self.bot_commands[command_name] = f
