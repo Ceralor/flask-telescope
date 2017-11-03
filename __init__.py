@@ -8,8 +8,11 @@ from flask import request, jsonify
 from functools import wraps
 
 class Bot(object):
-	def __init__(self, flask_app, tg_api_key, route_root = "tgbot"):
-		self.tg_api_key = tg_api_key
+	def __init__(self, flask_app, tg_api_key=None, route_root = "tgbot"):
+		if tg_api_key == None:
+			self.tg_api_key = flask_app.config["TG_API_KEY"]
+		else:
+			self.tg_api_key = tg_api_key
 		self.route_root = route_root
 		self.bot_commands = {}
 		bot_path = "/" + route_root + "/" + self.tg_api_key
