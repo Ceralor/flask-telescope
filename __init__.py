@@ -62,8 +62,10 @@ class Bot(object):
 			self.bot_commands[command_name] = f
 			return f
 		return decorator
-	def send_message(self,chat_id,message,parse_mode="Markdown"):
-		payload = {"chat_id" : chat_id, "message" : message, "parse_mode" : parse_mode}
+	def send_message(self,chat_id,message,parse_mode=None):
+		payload = {"chat_id" : chat_id, "message" : message}
+		if parse_mode != None:
+			payload.update({"parse_mode" : parse_mode})
 		r = requests.post(self._api_url+"sendMessage", data=payload)
 		if r.status_code != 200:
 			return (False,None)
