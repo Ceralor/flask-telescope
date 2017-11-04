@@ -29,7 +29,7 @@ class Bot(object):
 		if message["text"][0:1] != "/":
 			response_text = self._handle_default(message)
 		else:
-			command_end = self.find_command_end(message["text"])
+			command_end = self._find_command_end(message["text"])
 			command_name = message["text"][1:command_end]
 			if command_name in self.bot_commands.keys():
 				response_text = self.bot_commands[command_name](message)
@@ -41,17 +41,11 @@ class Bot(object):
 		else:
 			response_data = {}
 		return jsonify(response_data)
-	def find_command_end(self,message_text):
+	def _find_command_end(self,message_text):
 		command_end = message_text.find(' ')
 		if command_end < 2:
 			command_end = None
 		return command_end
-	def find_params(self,message_text):
-		command_end = self.find_command_end(message_text)
-		if command_end == None:
-			return ""
-		params_start = command_end + 1
-		return message_text[params_start:]
 	def _handle_default(self,message):
 		if "DEFAULT" in self.bot_commands.keys():
 			return self.bot_commands["DEFAULT"](message)
@@ -62,6 +56,12 @@ class Bot(object):
 			self.bot_commands[command_name] = f
 			return f
 		return decorator
+	def find_params(self,message_text):
+		command_end = self._find_command_end(message_text)
+		if command_end == None:
+			return ""
+		params_start = command_end + 1
+		return message_text[params_start:]
 	def send_message(self,chat_id,message,**kwargs):
 		payload = {"chat_id" : chat_id, "text" : message}
 		if len(kwargs) > 0:
