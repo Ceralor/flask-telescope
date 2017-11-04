@@ -6,6 +6,7 @@
 
 from flask import request, jsonify
 from functools import wraps
+import requests
 
 class Bot(object):
 	def __init__(self, flask_app, tg_api_key=None, route_root = "tgbot"):
@@ -15,6 +16,7 @@ class Bot(object):
 			self.tg_api_key = tg_api_key
 		self.route_root = route_root
 		self.bot_commands = {}
+		self._api_url = "https://api.telegram.org/bot" + self.tg_api_key + "/"
 		bot_path = "/" + route_root + "/" + self.tg_api_key
 		@flask_app.route(bot_path, methods=["GET","POST"])
 		def handle_command_init():
@@ -60,3 +62,11 @@ class Bot(object):
 			self.bot_commands[command_name] = f
 			return f
 		return decorator
+	def send_message(self,chat_id,message,parse_mode="Markdown"):
+		payload = {"chat_id" : chat_id, "message" : message, "parse_mode" : parse_mode}
+		r = requests.post(self._api_url+"sendMessage", data=payload)
+		if r.status_code != 200:
+			return (False,None)
+		else:
+			response = r.json()
+			return (response["ok"],response["result"])
