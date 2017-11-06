@@ -24,8 +24,14 @@ class Bot(object):
 	def _handle_command(self):
 		json_data = request.get_json()
 		assert json_data != {}, "Must send valid JSON."
-		message = json_data["message"]
-		chat_id = message["chat"]["id"]
+		if "message" in json_data.keys():
+			message = json_data["message"]
+			chat_id = message["chat"]["id"]
+		elif "callback_query" in json_data.keys():
+			message = json_data["callback_query"]
+			chat_id = message["from"]["id"]
+			message["chat"] = message["from"]
+			message["text"] = message["data"]
 		if message["text"][0:1] != "/":
 			response_text = self._handle_default(message)
 		else:
@@ -66,7 +72,7 @@ class Bot(object):
 		payload = {"chat_id" : chat_id, "text" : message}
 		if len(kwargs) > 0:
 			payload.update(kwargs)
-		r = requests.post(self._api_url+"sendMessage", data=payload)
+		r = requests.post(self._api_url+"sendMessage", json=payload)
 		if r.status_code != 200:
 			return (False,None)
 		else:
